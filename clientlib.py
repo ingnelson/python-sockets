@@ -1,5 +1,6 @@
 import socket
 import sys
+import math
 
 serverip = 'localhost'#'76.176.57.74'
 serverport = 8080
@@ -7,15 +8,17 @@ packetsize = 32
 
 def inputProcessing(op, input):
     inp = op + ':' + input
-    outlen = int(len(inp.encode('utf-8'))/packetsize)
-    outlen+=len(str(outlen))
-    return str(outlen) + ':' + inp
+    x = len(inp)+1
+    size = len(str(x))
+    base = pow(10, size)-size
+    result = math.ceil(x/base)+x
+    return str(result) + ':' + inp
 
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((serverip, serverport))
-outmessage = inputProcessing('repeat', 'this is sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssthe message')
+outmessage = inputProcessing('repeat', 'this issssssss the message')
 print('outmessage= '+ outmessage)
 s.send(outmessage.encode('utf-8'))
 
@@ -31,7 +34,7 @@ while True:
     print('packet (' + str(packetindex) + ')')
     if packetcount == -1:
         parts = msgdata.split(':')
-        packetcount = int(parts[0])
+        packetcount =  math.ceil(int(parts[0])/packetsize)
         residue = parts[1].encode('utf-8')
         indata+=residue
     else:
